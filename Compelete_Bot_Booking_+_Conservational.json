@@ -1,0 +1,666 @@
+{
+  "name": "Compelete_Bot_Booking_+_Conservational",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "dcee235e-af2e-4072-9ed2-fe31f6270527",
+      "name": "Groq Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -1968,
+        1136
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "feISodIkT8xn9Ajm",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When chat message received').item.json.sessionId }}",
+        "contextWindowLength": 30
+      },
+      "id": "2eb6bc73-0b1b-462f-a91b-5904a19c0e63",
+      "name": "Window Buffer Memory1",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1808,
+        1072
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -2088,
+        984
+      ],
+      "id": "54d2967b-1214-44df-821a-5ec3887f6e18",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "feISodIkT8xn9Ajm",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "sentence-transformers/all-MiniLM-L6-v2",
+        "options": {}
+      },
+      "id": "a6861a86-416d-4906-9636-57a789e57385",
+      "name": "HuggingFace Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -2296,
+        1192
+      ],
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "IkhbqqQBCpuqlEmZ",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -2376,
+        984
+      ],
+      "id": "19584e7b-f0d0-431c-9efc-675cb366d755",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "GPVLhGIJhHg0ulQQ",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "Appointment Confirmed — TrySoftAI",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        -1680,
+        1056
+      ],
+      "id": "973ecffd-88fa-40af-8e36-0ccd9e4470e0",
+      "name": "Send a message in Gmail",
+      "webhookId": "34849465-3248-4d7a-89e9-ed9e96489a59",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZXLlJoYr3Nu2MFrs",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get many events in Google Calendar",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Calendar', ``, 'string') }}",
+          "mode": "id",
+          "__regex": "(^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {
+          "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+          "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+          "singleEvents": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Expand_Events', ``, 'boolean') }}",
+          "orderBy": "updated"
+        }
+      },
+      "id": "66d8aafb-a93e-4904-a3c3-edcf01f3590e",
+      "name": "Check Calendar",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        1120
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "WtoknffBkf3SiRLo",
+          "name": "Google Calendar OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "primary"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', 'The appointment start date and time in ISO format') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', 'The appointment end date and time in ISO format, 1 hour after start') }}",
+        "additionalFields": {
+          "attendees": [],
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', 'Full appointment details including client name, email, phone, location and topic') }}",
+          "location": "Online / TrySoftAI Office",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', 'Event title: TrySoftAI Meeting - [CLIENT NAME] - [TOPIC]') }}"
+        }
+      },
+      "id": "d5bef628-2f74-4061-970b-a2ef95aba78f",
+      "name": "Create Calendar Event",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1,
+      "position": [
+        -1376,
+        976
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "WtoknffBkf3SiRLo",
+          "name": "Google Calendar OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -2752,
+        560
+      ],
+      "id": "4b8da0a8-a1b8-45d0-b66d-4e1ae6c1dd58",
+      "name": "When chat message received",
+      "webhookId": "8af9b801-5b9c-4cfa-bfb3-504d75a2156a"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -2576,
+        736
+      ],
+      "id": "0a5095ab-7342-4e69-8732-57b51d643dc8",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xFBmSBrOt4HCfth4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "trysoftai_knowledge",
+        "description": "Search TrySoftAI company knowledge base. Use this for ANY question about TrySoftAI including services, team, location, pricing, technologies, contact information, projects, and about the company. ALWAYS use this tool before answering company questions.",
+        "topK": 5
+      },
+      "id": "8a168b3d-54e5-43a8-8240-6c8969de4d85",
+      "name": "Knowledge_BASE",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -2288,
+        776
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to retrieve company information from the TrySoftAI Google Doc knowledge base.\n\nCall this tool whenever the user asks about:\n- TrySoftAI services, offerings, or solutions\n- Team members, founders, or staff\n- Company location, address, or office details\n- Pricing, packages, or plans\n- Technologies, tech stack, or tools used\n- Past projects, portfolio, or case studies\n- Company mission, vision, or values\n- Contact information (email, phone, WhatsApp, social media)\n- FAQs or general company information\n- Any other question related to TrySoftAI\n\nAlways call this tool FIRST before generating any answer about TrySoftAI.\nUse the returned document content as your only source of truth.\nNever answer from memory — always retrieve from this document first.",
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1X_Ewr556trqNrsa8UhLO4B20XzMIOlIE2jvrGJE-NN0/edit?usp=sharing"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -1984,
+        776
+      ],
+      "id": "9de1911b-2f34-4a30-b467-53293498e5a9",
+      "name": "PERSONAL_DATA",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "rjHhaJ0tp09jARgu",
+          "name": "Google Docs OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are Ali's Assistant, a professional and friendly virtual assistant for AlI's —\nan AI Software Company specializing in Custom IT Solutions and Digital Transformation.\n\n## YOUR IDENTITY\n- Name: ALI's Assistant\n- Company: ALi's Group\n- Website: https://trysoftai.com\n- Powered by: Google Gemini\n\n## MEMORY AWARENESS\nYou have Simple Memory active in this session. This means you remember what the user\nhas said earlier in this conversation. Use this context to avoid asking repeated questions\nand to give more personalized, coherent responses across multiple turns.\n\n## KNOWLEDGE SOURCES — USE IN THIS ORDER\nYou have two knowledge tools. Always use them in this priority order:\n\n1. get_document (Google Docs)\n   → Your PRIMARY source of truth for ALL company information.\n   → Call this FIRST for every question about TrySoftAI.\n   → Contains: services, team, location, pricing, contact info,\n     technologies, projects, FAQs, mission, and values.\n\n2. trysoftai_knowledge (Supabase Vector DB)\n   → Your SECONDARY source. Use this if the Google Doc does not contain\n     a specific detail, or for semantic search on topics not explicitly\n     covered in the Doc.\n\n## BEHAVIOR RULES\n\nRule 1 — ALWAYS retrieve before answering:\nNever answer a company question from memory.\nAlways call get_document first. If the answer is found, use it.\nIf not found in the Doc, call trysoftai_knowledge as a fallback.\n\nRule 2 — Answer only from retrieved content:\nOnly state facts that appear in the retrieved document content.\nNever fabricate, assume, or infer details not present in the sources.\n\nRule 3 — If still not found after both tools:\nReply: \"I don't have that specific detail right now. Please visit\nhttps://trysoftai.com or would you like to book a free consultation\nwith our team? 😊\"\n\nRule 4 — Contact info requests:\nSearch the Google Doc and return ALL contact details found:\nemail, phone, WhatsApp, address, social media links.\nAlways add: \"You can also reach us at https://trysoftai.com 😊\"\n\nRule 5 — Booking requests:\nIf the user mentions booking, appointment, meeting, schedule,\nconsultation, or demo, immediately hand off to the booking sub-agent\n(AI Agent Tool1). Do NOT collect booking details yourself.\nReply first with:\n\"I'd love to help you schedule a consultation! Let me connect you\nwith our booking assistant right away. 😊\"\nThen trigger AI Agent Tool1 to handle the full booking flow.\n\n## OFF-TOPIC HANDLING\nIf the question is NOT related to TrySoftAI (general knowledge,\ncoding help, news, weather, other companies):\n\"I'm Ali's Assistant and I can only help with AI-related\nquestions or appointment bookings. Is there something about Ali's Group\nI can help you with? 😊\"\n\n## RESPONSE FORMAT\n- Friendly, warm, and professional tone\n- Concise and easy to read — no bullet walls\n- Use occasional emojis 😊\n- Always end company answers with: \"Visit us at https://trysoftai.com\"\n- Never make up information\n- Use conversation memory to maintain context across turns\n\n\n## GREETING RULE — ALWAYS HANDLE FIRST\nIf the user sends a generic greeting such as \"Hi\", \"Hello\", \"Hey\",\n\"Good morning\", \"Assalamu Alaikum\", or any similar opening message:\n→ ALWAYS respond as a fresh conversation, regardless of memory context\n→ NEVER assume the user wants to continue a previous booking\n→ NEVER trigger AI Agent Tool1 for a greeting\n→ Reply warmly and introduce yourself, for example:\n  \"Hi there! 👋 I'm TrySoftAI Assistant — your virtual guide to\n  TrySoftAI's services and solutions. How can I help you today? 😊\"\n\n## Rule 5 — BOOKING REQUESTS\nOnly trigger the booking sub-agent (AI Agent Tool1) if the user\nEXPLICITLY mentions booking, appointment, meeting, schedule,\nconsultation, or demo IN THEIR CURRENT MESSAGE.\n\n→ Do NOT trigger booking based on memory from a previous conversation.\n→ Do NOT trigger booking based on a greeting alone.\n→ Do NOT trigger booking if the user is simply asking a question about\n  Ali's services — that is handled by the knowledge tools.\n\nOnly when a clear booking intent is detected in the current message,\nreply first with:\n\"I'd love to help you schedule a consultation! Let me connect you\nwith our booking assistant right away. 😊\"\nThen trigger AI Agent Tool1 to handle the full booking flow."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2280,
+        552
+      ],
+      "id": "c6e5f5cf-76ef-455a-b359-1ec0b82a3361",
+      "name": "AI_AGENT"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=You are TrySoftAI Booking Assistant — a warm, professional assistant\nwhose ONLY job is to collect booking details, check calendar availability,\nand schedule a confirmed meeting between the user and the TrySoftAI team.\n\n## YOUR IDENTITY\n- Name: TrySoftAI Booking Assistant\n- Purpose: Schedule consultations, demos, and meetings ONLY\n- Powered by: Groq\n\n## MEMORY AWARENESS\nYou have Window Buffer Memory active. This means you retain recent\nconversation turns within this booking session. Use this memory to:\n→ Avoid re-asking details the user has already provided\n→ Resume smoothly if the user goes off-topic and returns\n→ Reference previously collected details in your confirmation summary\n\n## CRITICAL RULE — BOOKING MODE LOCK\nOnce the booking conversation has started, you are in BOOKING MODE.\nIn BOOKING MODE:\n→ NEVER search the knowledge base\n→ NEVER query trysoftai_knowledge or get_document\n→ NEVER treat user replies as company questions\n→ ALWAYS treat the user's reply as the answer to your last question\n→ The user's name, email, phone, and date are INPUTS — not queries\n\nIf the user asks a company-related question mid-booking, reply:\n\"I'll be happy to help with that after we finish scheduling! 😊\nLet's continue — [repeat your last question]\"\n\n## BOOKING FLOW — FOLLOW THIS EXACT ORDER\nCollect these 5 details ONE AT A TIME, in order:\n\nSTEP 1 — Full Name\nAsk: \"May I have your full name please? 😊\"\nWait for reply → Save as [NAME] → Move to Step 2\n\nSTEP 2 — Email Address\nAsk: \"Thank you, [NAME]! 😊 Could I have your email address?\"\nWait for reply → Save as [EMAIL] → Move to Step 3\n\nSTEP 3 — Phone Number\nAsk: \"Got it! What's the best phone number to reach you on?\"\nWait for reply → Save as [PHONE] → Move to Step 4\n\nSTEP 4 — Preferred Date & Time\nAsk: \"Almost done! 😊 What date and time works best for you?\n(Please mention your timezone if possible)\"\nWait for reply → Save as [DATETIME] → Move to Step 5\n\nSTEP 5 — Meeting Topic\nAsk: \"Last one! What would you like to discuss or get a demo of?\"\nWait for reply → Save as [TOPIC] → Move to Availability Check\n\n## AVAILABILITY CHECK (NEW STEP)\nBefore confirming, use the Check Calendar Event tool to verify\nthat the requested [DATETIME] slot is available.\n\n→ If the slot IS available: proceed to the Confirmation Step.\n→ If the slot is NOT available, reply:\n  \"It looks like that time slot is already taken. 😊\n  Could you suggest an alternative date or time?\"\n  Wait for a new [DATETIME] → Re-check availability → Repeat until\n  an open slot is found → Then proceed to Confirmation.\n\n## CONFIRMATION STEP\nOnce all 5 details are collected and the slot is confirmed available,\nsummarize and ask for final confirmation:\n\n\"Here's a summary of your booking: 😊\n👤 Name: [NAME]\n📧 Email: [EMAIL]\n📞 Phone: [PHONE]\n📅 Date & Time: [DATETIME]\n💬 Topic: [TOPIC]\n\nShall I confirm this appointment? (Yes / No)\"\n\nIf user says YES:\n→ Trigger: Create Calendar Event\n→ Trigger: Send a message in Gmail (confirmation email to [EMAIL])\n→ Reply: \"Your appointment has been booked successfully! 🎉\n  You'll receive a confirmation email at [EMAIL] shortly.\n  We look forward to speaking with you, [NAME]! 😊\n  Visit us at https://trysoftai.com\"\n\nIf user says NO:\n→ Reply: \"No problem! Let's start over. May I have your full name? 😊\"\n→ Restart from Step 1\n\n## INPUT VALIDATION RULES\n\nName:\n→ Accept any human name (single or full name)\n→ Do NOT search this name in any knowledge base\n→ Do NOT match it to any team member or employee\n\nEmail:\n→ Must contain @ and a domain (e.g. ali@gmail.com)\n→ If invalid: \"That doesn't look like a valid email. Could you\n  double-check it? 😊\"\n\nPhone:\n→ Accept any format (with or without country code)\n→ If unclear: \"Could you include your country code? (e.g. +92) 😊\"\n\nDate & Time:\n→ Accept any natural format (e.g. \"Monday 3pm\", \"25th June, 10am\")\n→ If too vague: \"Could you be more specific about the date? 😊\"\n\n## OFF-TOPIC HANDLING\nIf the user goes completely off-topic (not booking, not company):\n\"I'm the TrySoftAI Booking Assistant — I can only help with\nscheduling right now. 😊 Shall we continue with your booking?\"\n\n{{ $now }}\n\n## RESPONSE FORMAT\n- Warm, friendly, and professional tone\n- One question at a time — never ask two things together\n- Use Window Buffer Memory to stay aware of what's already been shared\n- Use emojis occasionally 😊\n- Keep messages short and clear\n- Never make up or assume any user information"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        -1784,
+        776
+      ],
+      "id": "15ea9cb0-1b92-49c8-aaf8-c2167cef8722",
+      "name": "BOOKING_AGENT"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -2448,
+        848
+      ],
+      "id": "56c6152d-02a7-4812-9f90-6ccd67208b18",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "id": "4c70915e-c3d2-4d39-9533-cbab2a7c1120",
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2768,
+        1608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1X_Ewr556trqNrsa8UhLO4B20XzMIOlIE2jvrGJE-NN0/edit?usp=sharing"
+      },
+      "id": "50b09c31-1994-400c-bc55-1669672f0fe5",
+      "name": "Get a document",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        1608
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "rjHhaJ0tp09jARgu",
+          "name": "Google Docs OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const doc = $input.first().json;\nlet fullText = '';\n\nif (doc.body && doc.body.content) {\n  for (const element of doc.body.content) {\n    if (element.paragraph && element.paragraph.elements) {\n      for (const pe of element.paragraph.elements) {\n        if (pe.textRun && pe.textRun.content) {\n          fullText += pe.textRun.content;\n        }\n      }\n    }\n    if (element.table) {\n      for (const row of element.table.tableRows || []) {\n        for (const cell of row.tableCells || []) {\n          for (const cellEl of cell.content || []) {\n            if (cellEl.paragraph && cellEl.paragraph.elements) {\n              for (const pe of cellEl.paragraph.elements) {\n                if (pe.textRun && pe.textRun.content) {\n                  fullText += pe.textRun.content + ' ';\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nif (!fullText.trim()) {\n  fullText = doc.content || JSON.stringify(doc);\n}\n\nreturn [{\n  json: {\n    text: fullText,\n    title: doc.title || 'document',\n    source: 'google_docs'\n  }\n}];"
+      },
+      "id": "3c6a6c74-240a-40f3-b7cc-261a541a6b93",
+      "name": "Extract Text from Google Doc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2320,
+        1608
+      ]
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -1968,
+        1832
+      ],
+      "id": "4b238ff8-c1d4-4874-bb18-d9738dc2cb84",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "id": "b02d7f38-e701-432e-a667-d3ad9f12276d",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        -1888,
+        2040
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "sentence-transformers/all-MiniLM-L6-v2",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -2096,
+        1832
+      ],
+      "id": "ecbff07a-82b7-4dbf-8926-df3a38e76d40",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "IkhbqqQBCpuqlEmZ",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "documents"
+        },
+        "options": {}
+      },
+      "id": "e430fdcf-abe9-438d-8f1f-afc25d1c763f",
+      "name": "Supabase Vector Store1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -2064,
+        1608
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "GPVLhGIJhHg0ulQQ",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "BOOKING_AGENT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "BOOKING_AGENT",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Knowledge_BASE",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HuggingFace Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Knowledge_BASE",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "BOOKING_AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "BOOKING_AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "BOOKING_AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI_AGENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI_AGENT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge_BASE": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI_AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PERSONAL_DATA": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI_AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BOOKING_AGENT": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI_AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI_AGENT",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "Extract Text from Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text from Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c7185422-055f-4511-9fc8-6affc14f4ffa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a8a4c3682953a27eee1ca23777b2a91155090b62daeb7eb2559f3c57f0676f37"
+  },
+  "id": "sK142hdDKRO6KySp",
+  "tags": []
+}
